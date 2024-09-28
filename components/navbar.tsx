@@ -9,7 +9,7 @@ const Navbar: FC = () => {
     <nav className="p-4 text-white">
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-xl font-bold">
-          <a href="#">
+          <a href="/history">
             <svg className="w-4 h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
             </svg>
