@@ -98,23 +98,6 @@ const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 
 
  return (
-   <div
-     className="flex flex-col items-center justify-center min-h-screen bg-[#191919] outline-none"
-   >
-     {/* Centered Button for Google Sign-In or Sign-Out */}
-     {!user ? (
-       <Link href="/login">
-         <button className="bg-blue-500 text-white p-3 rounded hover:bg-blue-600 mb-4">
-           Sign In with Google
-         </button>
-       </Link>
-     ) : (
-       <button onClick={handleSignOut} className="bg-red-500 text-white p-3 rounded hover:bg-red-600 mb-4">
-         Sign Out
-       </button>
-     )}
-
-
 <div className="flex flex-col items-center mx-10 text-lg">
       <textarea
       ref={inputRef}
@@ -133,7 +116,6 @@ const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       style={{ minHeight: '96px' }} // Set a minimum height
       />
     </div>
-  </div>
   );
 }
 
