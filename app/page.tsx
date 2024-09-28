@@ -2,7 +2,7 @@
 'use client';
 
 import { db, initializeAnalytics } from './firebase/firebase'; // Ensure you import db and initializeAnalytics correctly
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, setDoc, doc, getDoc } from 'firebase/firestore';
 import React, { useEffect, useState, useRef } from 'react';
 import { auth } from './firebase/firebase';
 import { onAuthStateChanged } from 'firebase/auth'; // Import to check auth state
@@ -17,6 +17,7 @@ const HomePage = () => {
   const [data, setData] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null); // State to store user information
   const [text, setText] = useState<string>(''); // State to store typed text
+  const [lastSubmittedText, setLastSubmittedText] = useState<string>(''); // Track the last submitted text
   const inputRef = useRef<HTMLTextAreaElement>(null); // Ref to focus on the textarea
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -30,9 +31,9 @@ const HomePage = () => {
   }, []);
 
   const sendMessage = async () => {
-    if (input.trim() === '') return;
+    if (text.trim() === '' || text === lastSubmittedText) return; // Avoid empty or duplicate messages
 
-    const userMessage = input;
+    const userMessage = text; // Capture the new text
     setInput(''); // Clear the input field
     setError(null); // Reset any existing error
 
@@ -42,6 +43,33 @@ const HomePage = () => {
 
       // Add the user message and AI's response to the chat
       setMessages([...messages, { userMessage, aiResponse }]);
+
+      // **Update user input in Firestore**
+      if (user) {  // Only save if the user is authenticated
+        const userDocRef = doc(db, 'userTexts', user.uid); // Use user ID as document ID
+
+        // Fetch the existing text from Firestore
+        const existingDoc = await getDoc(userDocRef);
+        let existingText = '';
+
+        if (existingDoc.exists()) {
+          existingText = existingDoc.data()?.text || ''; // Get the existing text or an empty string
+        }
+
+        // Concatenate the new text with the existing text
+        // const updatedText = existingText ? `${existingText}\n${newText}` : newText;
+
+        // Update the document with the concatenated text
+        await setDoc(userDocRef, {
+          userId: user.uid,       // Save user ID
+          // text: updatedText,      // Save the updated text
+          text: userMessage,
+          timestamp: new Date()   // Save the timestamp
+        });
+
+        // Update the last submitted text
+        setLastSubmittedText(userMessage);
+      }
     } catch (error: any) {
       console.error('Error sending message:', error);
       setError(`Error: ${error.response?.data?.error || 'Request failed with status code ' + error.response?.status}`);
@@ -51,6 +79,7 @@ const HomePage = () => {
   // Handle keydown events
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     if (e.key === 'Enter') {
+      e.preventDefault(); // Prevent new line in textarea on Enter
       sendMessage();  // Send message on Enter
     }
   };
@@ -144,9 +173,9 @@ const HomePage = () => {
               className="highlighted-text"
               style={{ textDecoration: 'underline', textDecorationColor: '#cab0f5', textDecorationThickness: '2px', color: 'white' }}
               onMouseEnter={(event) => {
-              const aiResponse = messages.find(message => message.userMessage.includes(part))?.aiResponse || '';
-              const truncatedResponse = aiResponse.split('[')[0];
-              showTooltip(event, truncatedResponse);
+                const aiResponse = messages.find(message => message.userMessage.includes(part))?.aiResponse || '';
+                const truncatedResponse = aiResponse.split('[')[0];
+                showTooltip(event, truncatedResponse);
               }}
               onMouseLeave={hideTooltip}
             >
