@@ -1,13 +1,14 @@
-// components/Navbar.tsx
+'use client'; 
+
 import { FC, useState } from 'react';
 
 const Navbar: FC = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   return (
-    <nav className="bg-gray-800 p-4 text-white">
+    <nav className="p-4 text-white">
       <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-xl font-bold">Dashboard</h1>
+        <h1 className="text-xl font-bold">shaz</h1>
         <div className="relative">
           <button onClick={() => setDropdownOpen(!isDropdownOpen)} className="flex items-center space-x-2">
             <span>Profile</span>

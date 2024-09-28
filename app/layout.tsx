@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 const RootLayout: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <html lang="en">
-      <body className="bg-gray-100">
+      <body className="">
         <Navbar />
         <div>{children}</div>
       </body>
