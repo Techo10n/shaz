@@ -7,6 +7,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { auth, googleProvider } from '../app/firebase/firebase';
 import { signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth'; // Import signOut function
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 const Navbar: FC = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -88,13 +89,14 @@ const handleLogout = async () => {
                 Sign In
               </button>
           ) : (
-            <button onClick={() => setDropdownOpen(!isDropdownOpen)} className="flex items-center space-x-2">
-              <span>(())</span>
+            <button onClick={() => setDropdownOpen(!isDropdownOpen)} className="flex items-center space-x-2">              
+              <Image src={user ? user.photoURL : ""} alt="profile-pic" width ={96} height={96} className="w-8 h-8 rounded-full"/>
+              <span> <a>{user.displayName?.split(" ")[0]}</a> </span>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
-          )}
+          )} 
           {isDropdownOpen && (
             <div className="absolute right-0 mt-2 bg-[#191919] rounded-lg shadow-lg text-right">
               <a href="/profile" className="block px-4 py-2 text-white hover:bg-[#cab0f5] rounded-lg">Profile</a>
