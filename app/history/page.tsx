@@ -58,13 +58,10 @@ export default function NotesPage() {
     }
   };
 
-  // Navigate to the home page when clicking outside of the input field or title
-  const handleNoteClick = (note: Note) => {
-    if (editingNoteId !== note.id) {
-      router.push("/"); // Redirect to the home page
-    }
+  const handleNoteClick = () => {
+    router.push('/');
   };
-
+  
   return (
     <div className="min-h-screen w-full p-4">
       <h2 className="text-lg font-semibold text-[#cab0f5] mb-4">Notes</h2>
@@ -73,7 +70,7 @@ export default function NotesPage() {
           <li
             key={note.id}
             className="p-4 rounded-lg hover:bg-[#cab0f5] bg-[#191919] flex flex-col space-y-2 shadow-md cursor-pointer transition duration-300"
-            onClick={() => handleNoteClick(note)}
+            onClick={handleNoteClick}
           >
             {editingNoteId === note.id ? (
               <div className="flex flex-col space-y-2">

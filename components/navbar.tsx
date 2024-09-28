@@ -73,11 +73,11 @@ const handleLogout = async () => {
     <nav className="p-4 text-white">
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-xl font-bold">
-          <a href="/history">
+            <button onClick={() => router.push('/history')}>
             <svg className="w-4 h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
             </svg>
-          </a>
+            </button>
           <span className="pl-2">
             <a href='/'>shaz</a>
           </span>
@@ -99,7 +99,15 @@ const handleLogout = async () => {
             <div className="absolute right-0 mt-2 bg-[#191919] rounded-lg shadow-lg text-right">
               <a href="/profile" className="block px-4 py-2 text-white hover:bg-[#cab0f5] rounded-lg">Profile</a>
               <a href="#" className="block px-4 py-2 text-white hover:bg-[#cab0f5] rounded-lg">Dashboard</a>
-              <button onClick={handleLogout} className="block text-right w-full px-4 py-2 text-white hover:bg-[#cab0f5] rounded-lg">Log Out</button>
+                <button 
+                onClick={() => {
+                  handleLogout();
+                  setDropdownOpen(false); // Close the dropdown after logout
+                }} 
+                className="block text-right w-full px-4 py-2 text-white hover:bg-[#cab0f5] rounded-lg"
+                >
+                Log Out
+                </button>
             </div>
           )}
         </div>
