@@ -25,7 +25,7 @@ const Navbar: FC = () => {
           </button>
           {isDropdownOpen && (
             <div className="absolute right-0 mt-2 bg-[#191919] rounded-lg shadow-lg">
-              <a href="#" className="text-right block px-4 py-2 text-white hover:bg-[#cab0f5] rounded-lg">Profile</a>
+              <a href="/profile" className="text-right block px-4 py-2 text-white hover:bg-[#cab0f5] rounded-lg">Profile</a>
               <a href="#" className="text-right block px-4 py-2 text-white hover:bg-[#cab0f5] rounded-lg">Dashboard</a>
               <a href="#" className="text-right block px-4 py-2 text-white hover:bg-[#cab0f5] rounded-lg">Log Out</a>
             </div>
