@@ -42,6 +42,13 @@ const sendMessage = async () => {
 };
 
 // Handle keydown events
+
+const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+  if (e.key === 'Enter') {
+    sendMessage();  // Send message on Enter
+  }
+};
+
 const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
   const selectionStart = inputRef.current?.selectionStart;
   const selectionEnd = inputRef.current?.selectionEnd;
@@ -57,12 +64,6 @@ const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     }
   }
 };
-
-const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-  if (e.key === 'Enter') {
-    sendMessage();  // Send message on Enter
-  }
-}
 
  const fetchData = async () => {
    try {
