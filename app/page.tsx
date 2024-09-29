@@ -5,7 +5,7 @@ import { db, initializeAnalytics } from './firebase/firebase';
 import { collection, setDoc, doc, getDoc } from 'firebase/firestore';
 import { auth } from './firebase/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 interface Message {
   userMessage: string;
@@ -34,7 +34,7 @@ const HomePage = () => {
 
       setMessages([...messages, { userMessage, aiResponse }]);
 
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error sending message:', error);
     }
   };
