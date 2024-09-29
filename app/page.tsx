@@ -13,15 +13,11 @@ interface Message {
 }
 
 const HomePage = () => {
-  const [data, setData] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
   const [text, setText] = useState<string>('');
   const [lastSubmittedText, setLastSubmittedText] = useState<string>('');
-  const [storedWords, setStoredWords] = useState<string>(''); // To store every 15 words
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
-  const [error, setError] = useState<string | null>(null);
   const [tooltip, setTooltip] = useState<{ visible: boolean; content: string; x: number; y: number }>({ visible: false, content: '', x: 0, y: 0 });
   const [noteId, setNoteId] = useState<string | null>(localStorage.getItem("noteId")); // Tracks the current note ID in Firestore
  const [userId, setUserId] = useState<string | null>(localStorage.getItem("userId")); // Tracks the current user ID in Firestore
@@ -97,7 +93,6 @@ const HomePage = () => {
       }
     } catch (error: any) {
       console.error('Error sending message:', error);
-      setError(`Error: ${error.response?.data?.error || 'Request failed with status code ' + error.response?.status}`);
     }
   };
 
@@ -106,7 +101,6 @@ const HomePage = () => {
     if (messageToSend.trim() === '') return;
 
     const userMessage = messageToSend;
-    setError(null);
 
     try {
       const response = await axios.post('http://127.0.0.1:5000/api/chat', { message: userMessage });
@@ -116,7 +110,6 @@ const HomePage = () => {
 
     } catch (error: any) {
       console.error('Error sending message:', error);
-      setError(`Error: ${error.response?.data?.error || 'Request failed with status code ' + error.response?.status}`);
     }
   };
 
@@ -124,7 +117,6 @@ const HomePage = () => {
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
     setText(newText);
-    setInput(newText);
 
     const words = newText.trim().split(/\s+/);
     const wordCount = words.length;
@@ -132,7 +124,6 @@ const HomePage = () => {
     // Check if 15 words are typed
     if (wordCount >= 15 && wordCount > 0) {
       const last15Words = words.slice(wordCount - 15).join(' '); // Get last 15 words
-      setStoredWords(last15Words); // Store those words
       sendMessage(last15Words); // Send message with those 15 words
     }
 
@@ -159,7 +150,6 @@ const HomePage = () => {
     try {
       const querySnapshot = await getDocs(collection(db, 'yourCollection'));
       const fetchedData = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setData(fetchedData);
     } catch (error) {
       console.error('Error fetching data: ', error);
     }
@@ -208,7 +198,7 @@ const HomePage = () => {
     };
   }, []);
 
-  let phrases = messages.flatMap((message) => parsePhrases(message.aiResponse));
+  const phrases = messages.flatMap((message) => parsePhrases(message.aiResponse));
   const parts = text.split(new RegExp(`(${phrases.join('|')})`, 'gi'));
 
   return (

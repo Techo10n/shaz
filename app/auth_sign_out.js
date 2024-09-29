@@ -7,7 +7,6 @@ import { useRouter } from 'next/router';
 const signOutUser = async () => {
  const router = useRouter(); // Initialize router
 
-
  try {
    await signOut(auth);
    console.log("User signed out successfully.");

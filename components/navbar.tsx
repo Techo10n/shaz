@@ -1,8 +1,8 @@
 'use client';
 
 import { FC, useEffect, useState } from 'react';
-import { db, initializeAnalytics } from '../app/firebase/firebase'; // Ensure you import db and initializeAnalytics correctly
-import { collection, getDocs, setDoc, doc } from 'firebase/firestore';
+import { db } from '../app/firebase/firebase'; // Ensure you import db and initializeAnalytics correctly
+import { setDoc, doc } from 'firebase/firestore';
 import { auth, googleProvider } from '../app/firebase/firebase';
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth'; // Import signOut function
 import { useRouter } from 'next/navigation';
