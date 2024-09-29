@@ -19,7 +19,6 @@ def chat():
     data = request.get_json()
     user_message = data.get('message', '')
 
-
     try:
         response = openai.ChatCompletion.create(
             model="gpt-4o-mini-2024-07-18",
