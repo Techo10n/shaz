@@ -5,7 +5,6 @@ import { db, initializeAnalytics } from './firebase/firebase';
 import { collection, getDocs, setDoc, doc, getDoc } from 'firebase/firestore';
 import { auth } from './firebase/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { onAuthStateChanged } from 'firebase/auth';
 import axios from 'axios';
 
 interface Message {
@@ -24,21 +23,82 @@ const HomePage = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [tooltip, setTooltip] = useState<{ visible: boolean; content: string; x: number; y: number }>({ visible: false, content: '', x: 0, y: 0 });
+  const [noteId, setNoteId] = useState<string | null>(localStorage.getItem("noteId")); // Tracks the current note ID in Firestore
+ const [userId, setUserId] = useState<string | null>(localStorage.getItem("userId")); // Tracks the current user ID in Firestore
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
+  useEffect(() => {
+    if (userId) {
+      displayNoteContent(userId);
+    }
+  }, [userId]);
+
+  const displayNoteContent = async (userIdParam: string) => {
+    if (!noteId) return;
+ 
+ 
+    try {
+      const userDocRef = doc(db, 'users', userIdParam);
+      const historyCollectionRef = collection(userDocRef, 'history');
+      const noteDocRef = doc(historyCollectionRef, noteId);
+      const noteDocSnap = await getDoc(noteDocRef);
+ 
+ 
+      if (noteDocSnap.exists()) {
+        const data = noteDocSnap.data();
+        setText(data.content);
+      } else {
+        console.log("No such document!");
+      }
+    } catch (error) {
+      console.error("Error fetching note content:", error);
+    }
+  }
+
+  const dbSubmit = async () => {
+    // Prevent submission if the text is empty or hasn't changed
+    if (text.trim() === '' || text === lastSubmittedText) return;
+    const userMessage = text;
+    try {
+      // Store the message in Firestore if the user is logged in
+      if (user) {
+        const userDocRef = doc(db, 'users', user.uid);
+        if (!userId) {
+          setUserId(user.uid);
+          localStorage.setItem("userId", user.uid);
+        }
+ 
+        const historyCollectionRef = collection(userDocRef, 'history');
+        const noteDocRef = noteId ? doc(historyCollectionRef, noteId) : doc(historyCollectionRef);
+        if (!noteId) {
+          setNoteId(noteDocRef.id);
+          localStorage.setItem("noteId", noteDocRef.id);
+        }
+ 
+        // Prepare data to be stored in Firestore
+        const noteData = {
+          title: 'untitled note',
+          content: userMessage,
+          date_time: new Date(),
+        };
+ 
+        // Store the note data in Firestore
+        await setDoc(noteDocRef, noteData);
+        setLastSubmittedText(userMessage);
+      }
+    } catch (error: any) {
+      console.error('Error sending message:', error);
+      setError(`Error: ${error.response?.data?.error || 'Request failed with status code ' + error.response?.status}`);
+    }
+  };
+
   // Function to send a message
   const sendMessage = async (messageToSend: string) => {
     if (messageToSend.trim() === '') return;
 
-    const userMessage = text;
-    setInput('');
-    setError(null);
-
-    try {
-      // Send the user message to the backend API
     const userMessage = messageToSend;
     setError(null);
 
@@ -48,25 +108,6 @@ const HomePage = () => {
 
       setMessages([...messages, { userMessage, aiResponse }]);
 
-      if (user) {
-        const userDocRef = doc(db, 'userTexts', user.uid);
-        const existingDoc = await getDoc(userDocRef);
-        let existingText = '';
-
-        if (existingDoc.exists()) {
-          existingText = existingDoc.data()?.text || '';
-        }
-
-        const updatedText = existingText ? `${existingText}\n${userMessage}` : userMessage;
-
-        await setDoc(userDocRef, {
-          userId: user.uid,
-          text: updatedText,
-          timestamp: new Date(),
-        });
-
-        setLastSubmittedText(userMessage);
-      }
     } catch (error: any) {
       console.error('Error sending message:', error);
       setError(`Error: ${error.response?.data?.error || 'Request failed with status code ' + error.response?.status}`);
@@ -89,19 +130,18 @@ const HomePage = () => {
       sendMessage(last15Words); // Send message with those 15 words
     }
 
-    const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === 'Enter' || e.key === 'Backspace' || e.key === '.') {
-        const last15Words = words.slice(wordCount - 15).join(' '); // Get last 15 words
-        setStoredWords(last15Words); // Store those words
-        sendMessage(last15Words); // Send message with those 15 words
-      }
-    };
-
-    inputRef.current?.addEventListener('keypress', handleKeyPress);
+    // inputRef.current?.addEventListener('keypress', handleKeyPress);
 
     if (inputRef.current) {
       inputRef.current.style.height = 'auto';
       inputRef.current.style.height = `${inputRef.current.scrollHeight}px`;
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      dbSubmit();
     }
   };
 
@@ -128,7 +168,6 @@ const HomePage = () => {
     return () => unsubscribe();
   }, []);
 
-  // Parse phrases from AI response text
   const parsePhrases = (aiResponse: string): string[] => {
     const match = aiResponse.match(/\[User: (.+)\]/);
     if (match && match[1]) {
@@ -137,14 +176,12 @@ const HomePage = () => {
     return [];
   };
 
-  // Show tooltip on mouse hover
   const showTooltip = (event: React.MouseEvent, content: string) => {
     event.stopPropagation();
     const { clientX: x, clientY: y } = event;
     setTooltip({ visible: true, content, x, y });
   };
 
-  // Hide tooltip when mouse leaves
   const hideTooltip = () => {
     setTooltip({ visible: false, content: '', x: 0, y: 0 });
   };
@@ -206,6 +243,7 @@ const HomePage = () => {
           ref={inputRef}
           value={text}
           onChange={handleTextChange}
+          onKeyPress={handleKeyPress}
           className="relative w-full p-4 focus:outline-none bg-transparent resize-none overflow-hidden text-white"
           placeholder="Begin writing..."
           style={{ minHeight: '96px', maxHeight: 'none', overflowY: 'auto', zIndex: 0 }}
