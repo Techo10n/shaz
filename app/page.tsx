@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { db, initializeAnalytics } from './firebase/firebase';
-import { collection, getDocs, setDoc, doc, getDoc } from 'firebase/firestore';
+import { collection, setDoc, doc, getDoc } from 'firebase/firestore';
 import { auth } from './firebase/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, User } from 'firebase/auth';
 import axios from 'axios';
 
 interface Message {
@@ -13,24 +13,35 @@ interface Message {
 }
 
 const HomePage = () => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [text, setText] = useState<string>('');
   const [lastSubmittedText, setLastSubmittedText] = useState<string>('');
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [tooltip, setTooltip] = useState<{ visible: boolean; content: string; x: number; y: number }>({ visible: false, content: '', x: 0, y: 0 });
   const [noteId, setNoteId] = useState<string | null>(localStorage.getItem("noteId")); // Tracks the current note ID in Firestore
- const [userId, setUserId] = useState<string | null>(localStorage.getItem("userId")); // Tracks the current user ID in Firestore
+  const [userId, setUserId] = useState<string | null>(localStorage.getItem("userId")); // Tracks the current user ID in Firestore
+
+  // Function to send a message
+  const sendMessage = async (messageToSend: string) => {
+    if (messageToSend.trim() === '') return;
+
+    const userMessage = messageToSend;
+
+    try {
+      const response = await axios.post('http://127.0.0.1:5000/api/chat', { message: userMessage });
+      const aiResponse = response.data.response;
+
+      setMessages([...messages, { userMessage, aiResponse }]);
+
+    } catch (error: any) {
+      console.error('Error sending message:', error);
+    }
+  };
 
   useEffect(() => {
     inputRef.current?.focus();
-    sendMessage(text);
   }, []);
-  useEffect(() => {
-    if (text.trim() !== '') {
-      sendMessage(text);
-    }
-  }, [text]);
 
   useEffect(() => {
     if (userId) {
@@ -96,23 +107,6 @@ const HomePage = () => {
     }
   };
 
-  // Function to send a message
-  const sendMessage = async (messageToSend: string) => {
-    if (messageToSend.trim() === '') return;
-
-    const userMessage = messageToSend;
-
-    try {
-      const response = await axios.post('http://127.0.0.1:5000/api/chat', { message: userMessage });
-      const aiResponse = response.data.response;
-
-      setMessages([...messages, { userMessage, aiResponse }]);
-
-    } catch (error: any) {
-      console.error('Error sending message:', error);
-    }
-  };
-
   // Function to handle text change and word count logic
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
@@ -148,8 +142,7 @@ const HomePage = () => {
 
   const fetchData = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, 'yourCollection'));
-      const fetchedData = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      // Your fetch logic here
     } catch (error) {
       console.error('Error fetching data: ', error);
     }
@@ -243,7 +236,7 @@ const HomePage = () => {
           ref={inputRef}
           value={text}
           onChange={handleTextChange}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyPress}
           className="relative w-full p-4 focus:outline-none bg-transparent resize-none overflow-hidden text-white"
           placeholder="Begin writing..."
           style={{ minHeight: '96px', maxHeight: 'none', overflowY: 'auto', zIndex: 0 }}

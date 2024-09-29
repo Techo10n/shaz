@@ -1,13 +1,9 @@
 // auth_sign_in.js
 import { auth, googleProvider } from './firebase/firebase';
 import { signInWithPopup } from "firebase/auth";
-import { useRouter } from 'next/router';
 
 
-const signInWithGoogle = async () => {
- const router = useRouter(); // Initialize router
-
-
+const signInWithGoogle = async (router) => {
  try {
    const result = await signInWithPopup(auth, googleProvider);
    const user = result.user;
