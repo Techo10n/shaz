@@ -104,7 +104,7 @@ export default function NotesPage() {
   const handleNoteClick = (noteId: string) => {
     // Set noteId in local storage and redirect to home
     localStorage.setItem("noteId", noteId); // Store the noteId in local storage
-    if (!auth.currentUser) return; // Ensure the user is authenticated
+    if (!auth.currentUser) return; // Ensure the user is authenticatedxs
     localStorage.setItem("userId", auth.currentUser.uid); // Store the noteId in local storage
     // console.log(noteId)
     router.push("/"); // Redirect to the home page

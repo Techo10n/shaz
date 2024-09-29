@@ -64,20 +64,22 @@ const Navbar: FC = () => {
 
   return (
     <nav className="p-4 text-white">
-      <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-xl font-bold">
-          <button onClick={() => router.push('/history')}>
-            <svg className="w-4 h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <span className="pl-2">
-            <button onClick={() => {
-              localStorage.setItem("noteId", ""); // Set noteId to null when clicking shaz
-              window.location.href = '/'; // Force a full page reload
-            }}>shaz</button>
-          </span>
-        </h1>
+      <div className="container flex justify-between items-center">
+        <div className="flex items-center">
+          <h1 className="text-xl font-bold">
+            <button onClick={() => router.push('/history')}>
+              <svg className="w-4 h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <span className="pl-2">
+              <button onClick={() => {
+                localStorage.setItem("noteId", ""); // Set noteId to null when clicking shaz
+                window.location.href = '/'; // Force a full page reload
+              }}>sentimentai</button>
+            </span>
+          </h1>
+        </div>
         <div className="relative">
           {!user ? (
             <button onClick={handleLogin} className="flex items-center space-x-2 hover:underline">
@@ -93,8 +95,7 @@ const Navbar: FC = () => {
             </button>
           )}
           {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 bg-[#191919] rounded-lg shadow-lg text-right">
-              <a href="/profile" className="block px-4 py-2 text-white hover:bg-[#cab0f5] rounded-lg">Profile</a>
+            <div className="absolute right-0 mt-2 bg-[#191919] rounded-lg shadow-lg text-right z-50">
               <a href="#" className="block px-4 py-2 text-white hover:bg-[#cab0f5] rounded-lg">Dashboard</a>
               <button
                 onClick={() => {
