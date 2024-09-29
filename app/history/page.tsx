@@ -17,7 +17,7 @@ type Note = {
 export default function NotesPage() {
   const [notes, setNotes] = useState<Note[]>([]);
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
-  const [newTitle, setNewTitle] = useState("");
+  const [newTitle, setNewTitle] = useState<string>("");
   const router = useRouter();
 
   // Fetch notes from Firestore
@@ -104,7 +104,7 @@ export default function NotesPage() {
   const handleNoteClick = (noteId: string) => {
     // Set noteId in local storage and redirect to home
     localStorage.setItem("noteId", noteId); // Store the noteId in local storage
-    if (!auth.currentUser) return; // Ensure the user is authenticatedxs
+    if (!auth.currentUser) return; // Ensure the user is authenticated
     localStorage.setItem("userId", auth.currentUser.uid); // Store the noteId in local storage
     // console.log(noteId)
     router.push("/"); // Redirect to the home page
@@ -112,7 +112,7 @@ export default function NotesPage() {
 
   return (
     <div className="min-h-screen w-full p-4">
-      <h2 className="text-lg font-semibold text-[#cab0f5] mb-4">Notes</h2>
+      <div className="text-xl font-semibold text-[#cab0f5] m-4">History</div>
       <ul className="space-y-4">
         {notes.map((note) => (
           <li
@@ -128,6 +128,7 @@ export default function NotesPage() {
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   onKeyDown={(e) => handleKeyPress(e, note.id)} // note.id is a string
+                  onClick={(e) => e.stopPropagation()} // Prevent the click from bubbling up to the note box
                   autoFocus
                 />
                 <span className="text-sm text-gray-400">

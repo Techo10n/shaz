@@ -64,7 +64,7 @@ const Navbar: FC = () => {
 
   return (
     <nav className="p-4 text-white">
-      <div className="container flex justify-between items-center">
+      <div className="pr-4 w-full flex justify-between">
         <div className="flex items-center">
           <h1 className="text-xl font-bold">
             <button onClick={() => router.push('/history')}>
@@ -73,10 +73,10 @@ const Navbar: FC = () => {
               </svg>
             </button>
             <span className="pl-2">
-              <button onClick={() => {
+                <button className="hover:text-[#cab0f5]" onClick={() => {
                 localStorage.setItem("noteId", ""); // Set noteId to null when clicking shaz
                 window.location.href = '/'; // Force a full page reload
-              }}>sentimentai</button>
+                }}>sentimentai</button>
             </span>
           </h1>
         </div>
@@ -96,7 +96,7 @@ const Navbar: FC = () => {
           )}
           {isDropdownOpen && (
             <div className="absolute right-0 mt-2 bg-[#191919] rounded-lg shadow-lg text-right z-50">
-              <a href="#" className="block px-4 py-2 text-white hover:bg-[#cab0f5] rounded-lg">Dashboard</a>
+              <button onClick={() => {router.push('/history'); setDropdownOpen(false);}} className="block px-4 py-2 text-white hover:bg-[#cab0f5] rounded-lg">History</button>
               <button
                 onClick={() => {
                   handleLogout();
