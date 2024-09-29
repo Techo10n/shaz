@@ -5,6 +5,7 @@ import { db, initializeAnalytics } from './firebase/firebase';
 import { collection, getDocs, setDoc, doc, getDoc } from 'firebase/firestore';
 import { auth } from './firebase/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 import axios from 'axios';
 
 interface Message {
@@ -32,6 +33,12 @@ const HomePage = () => {
   const sendMessage = async (messageToSend: string) => {
     if (messageToSend.trim() === '') return;
 
+    const userMessage = text;
+    setInput('');
+    setError(null);
+
+    try {
+      // Send the user message to the backend API
     const userMessage = messageToSend;
     setError(null);
 
@@ -121,6 +128,7 @@ const HomePage = () => {
     return () => unsubscribe();
   }, []);
 
+  // Parse phrases from AI response text
   const parsePhrases = (aiResponse: string): string[] => {
     const match = aiResponse.match(/\[User: (.+)\]/);
     if (match && match[1]) {
@@ -129,12 +137,14 @@ const HomePage = () => {
     return [];
   };
 
+  // Show tooltip on mouse hover
   const showTooltip = (event: React.MouseEvent, content: string) => {
     event.stopPropagation();
     const { clientX: x, clientY: y } = event;
     setTooltip({ visible: true, content, x, y });
   };
 
+  // Hide tooltip when mouse leaves
   const hideTooltip = () => {
     setTooltip({ visible: false, content: '', x: 0, y: 0 });
   };
