@@ -28,7 +28,13 @@ const HomePage = () => {
 
   useEffect(() => {
     inputRef.current?.focus();
+    sendMessage(text);
   }, []);
+  useEffect(() => {
+    if (text.trim() !== '') {
+      sendMessage(text);
+    }
+  }, [text]);
 
   useEffect(() => {
     if (userId) {
@@ -124,7 +130,7 @@ const HomePage = () => {
     const wordCount = words.length;
 
     // Check if 15 words are typed
-    if (wordCount % 15 === 0 && wordCount > 0) {
+    if (wordCount >= 15 && wordCount > 0) {
       const last15Words = words.slice(wordCount - 15).join(' '); // Get last 15 words
       setStoredWords(last15Words); // Store those words
       sendMessage(last15Words); // Send message with those 15 words
@@ -144,6 +150,10 @@ const HomePage = () => {
       dbSubmit();
     }
   };
+
+   useEffect(() => {
+     dbSubmit();
+   }, [text]);
 
   const fetchData = async () => {
     try {
