@@ -1,11 +1,11 @@
 'use client'
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { db, initializeAnalytics } from './firebase/firebase';
 import { collection, setDoc, doc, getDoc } from 'firebase/firestore';
 import { auth } from './firebase/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 interface Message {
   userMessage: string;
@@ -43,23 +43,15 @@ const HomePage = () => {
     inputRef.current?.focus();
   }, []);
 
-  useEffect(() => {
-    if (userId) {
-      displayNoteContent(userId);
-    }
-  }, [userId]);
-
-  const displayNoteContent = async (userIdParam: string) => {
+  const displayNoteContent = useCallback(async (userIdParam: string) => {
     if (!noteId) return;
- 
- 
+
     try {
       const userDocRef = doc(db, 'users', userIdParam);
       const historyCollectionRef = collection(userDocRef, 'history');
       const noteDocRef = doc(historyCollectionRef, noteId);
       const noteDocSnap = await getDoc(noteDocRef);
- 
- 
+
       if (noteDocSnap.exists()) {
         const data = noteDocSnap.data();
         setText(data.content);
@@ -69,9 +61,15 @@ const HomePage = () => {
     } catch (error) {
       console.error("Error fetching note content:", error);
     }
-  }
+  }, [noteId]);
 
-  const dbSubmit = async () => {
+  useEffect(() => {
+    if (userId) {
+      displayNoteContent(userId);
+    }
+  }, [userId, displayNoteContent]);
+
+  const dbSubmit = useCallback(async () => {
     // Prevent submission if the text is empty or hasn't changed
     if (text.trim() === '' || text === lastSubmittedText) return;
     const userMessage = text;
@@ -83,29 +81,29 @@ const HomePage = () => {
           setUserId(user.uid);
           localStorage.setItem("userId", user.uid);
         }
- 
+
         const historyCollectionRef = collection(userDocRef, 'history');
         const noteDocRef = noteId ? doc(historyCollectionRef, noteId) : doc(historyCollectionRef);
         if (!noteId) {
           setNoteId(noteDocRef.id);
           localStorage.setItem("noteId", noteDocRef.id);
         }
- 
+
         // Prepare data to be stored in Firestore
         const noteData = {
           title: 'untitled note',
           content: userMessage,
           date_time: new Date(),
         };
- 
+
         // Store the note data in Firestore
         await setDoc(noteDocRef, noteData);
         setLastSubmittedText(userMessage);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error sending message:', error);
     }
-  };
+  }, [text, lastSubmittedText, user, userId, noteId]);
 
   // Function to handle text change and word count logic
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -136,9 +134,9 @@ const HomePage = () => {
     }
   };
 
-   useEffect(() => {
-     dbSubmit();
-   }, [text]);
+  useEffect(() => {
+    dbSubmit();
+  }, [text, dbSubmit]);
 
   const fetchData = async () => {
     try {

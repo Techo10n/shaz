@@ -4,13 +4,13 @@ import { FC, useEffect, useState } from 'react';
 import { db } from '../app/firebase/firebase'; // Ensure you import db and initializeAnalytics correctly
 import { setDoc, doc } from 'firebase/firestore';
 import { auth, googleProvider } from '../app/firebase/firebase';
-import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth'; // Import signOut function
+import { signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth'; // Import User type
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 const Navbar: FC = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const [user, setUser] = useState<any>(null); // State to store user information
+  const [user, setUser] = useState<User | null>(null); // State to store user information
   const router = useRouter();
 
   // Check for user authentication state
@@ -85,7 +85,7 @@ const Navbar: FC = () => {
             </button>
           ) : (
             <button onClick={() => setDropdownOpen(!isDropdownOpen)} className="flex items-center space-x-2">
-              <Image src={user ? user.photoURL : ""} alt="profile-pic" width={96} height={96} className="w-8 h-8 rounded-full" />
+              <Image src={user?.photoURL ?? "/default-profile-pic.png"} alt="profile-pic" width={96} height={96} className="w-8 h-8 rounded-full" />
               <span><a>{user.displayName?.split(" ")[0]}</a></span>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
