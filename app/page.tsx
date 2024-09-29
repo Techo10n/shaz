@@ -140,8 +140,8 @@ const HomePage = () => {
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
+    if (e.key === 'Enter', e.key === '.', e.key === 'Backspace') {
+      sendMessage(text); // Send message with those 15 words
       dbSubmit();
     }
   };
