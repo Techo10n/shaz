@@ -12,6 +12,14 @@ interface Message {
   aiResponse: string;
 }
 
+// Utility function to safely access localStorage
+const getLocalStorageItem = (key: string): string | null => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem(key);
+  }
+  return null;
+};
+
 const HomePage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [text, setText] = useState<string>('');
@@ -19,8 +27,8 @@ const HomePage = () => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [tooltip, setTooltip] = useState<{ visible: boolean; content: string; x: number; y: number }>({ visible: false, content: '', x: 0, y: 0 });
-  const [noteId, setNoteId] = useState<string | null>(localStorage.getItem("noteId")); // Tracks the current note ID in Firestore
-  const [userId, setUserId] = useState<string | null>(localStorage.getItem("userId")); // Tracks the current user ID in Firestore
+  const [noteId, setNoteId] = useState<string | null>(getLocalStorageItem("noteId")); // Tracks the current note ID in Firestore
+  const [userId, setUserId] = useState<string | null>(getLocalStorageItem("userId")); // Tracks the current user ID in Firestore
 
   // Function to send a message
   const sendMessage = async (messageToSend: string) => {
@@ -79,14 +87,18 @@ const HomePage = () => {
         const userDocRef = doc(db, 'users', user.uid);
         if (!userId) {
           setUserId(user.uid);
-          localStorage.setItem("userId", user.uid);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem("userId", user.uid);
+          }
         }
 
         const historyCollectionRef = collection(userDocRef, 'history');
         const noteDocRef = noteId ? doc(historyCollectionRef, noteId) : doc(historyCollectionRef);
         if (!noteId) {
           setNoteId(noteDocRef.id);
-          localStorage.setItem("noteId", noteDocRef.id);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem("noteId", noteDocRef.id);
+          }
         }
 
         // Prepare data to be stored in Firestore
