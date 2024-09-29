@@ -53,7 +53,11 @@ export default function NotesPage() {
           createdOn: createdOn,
         };
       });
-      setNotes(fetchedNotes);
+
+      // Sort the notes by lastEdited date in descending order
+      const sortedNotes = fetchedNotes.sort((a, b) => b.lastEdited.getTime() - a.lastEdited.getTime());
+
+      setNotes(sortedNotes);
     } catch (error) {
       console.error("Error fetching notes: ", error);
     }
@@ -85,7 +89,7 @@ export default function NotesPage() {
           note.id === id
             ? { ...note, title: newTitle, lastEdited: new Date() }
             : note
-        )
+        ).sort((a, b) => b.lastEdited.getTime() - a.lastEdited.getTime()) // Sort after updating
       );
 
       setEditingNoteId(null);

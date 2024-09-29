@@ -74,9 +74,9 @@ const Navbar: FC = () => {
             </button>
             <span className="pl-2">
                 <button className="hover:text-[#cab0f5]" onClick={() => {
-                localStorage.setItem("noteId", ""); // Set noteId to null when clicking shaz
+                localStorage.setItem("noteId", ""); // Set noteId to null when clicking title
                 window.location.href = '/'; // Force a full page reload
-                }}>sentimentai</button>
+                }}>empAIthetic</button>
             </span>
           </h1>
         </div>

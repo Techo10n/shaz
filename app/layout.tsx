@@ -4,8 +4,8 @@ import Navbar from "../components/navbar";
 import { FC, ReactNode } from 'react';
 
 export const metadata: Metadata = {
-  title: "shaz",
-  description: "shaz",
+  title: "empAIthetic",
+  description: "empAIthetic is a web app that uses AI to provide emotional support through text-based conversations.",
 };
 
 const RootLayout: FC<{ children: ReactNode }> = ({ children }) => {

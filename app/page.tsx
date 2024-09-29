@@ -62,7 +62,9 @@ const HomePage = () => {
 
       if (noteDocSnap.exists()) {
         const data = noteDocSnap.data();
-        setText(data.content);
+        const noteContent = data.content;
+        setText(noteContent);
+        sendMessage(noteContent); // Send the entire note content to the AI
       } else {
         console.log("No such document!");
       }
@@ -205,7 +207,7 @@ const HomePage = () => {
   const parts = text.split(new RegExp(`(${phrases.join('|')})`, 'gi'));
 
   return (
-    <div className="relative mx-10 text-lg">
+    <div className="relative mx-6 text-lg">
       <div className="relative">
         {/* Overlay Div for Underlining and Tooltip Functionality */}
         <div
