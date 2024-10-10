@@ -1,36 +1,11 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+When we formed our hackathon team, we had no idea who each other were. We were simply freshmen and sophomores trying to enjoy our first hackathon. At first, we were unsure of what we wanted to make, or even what the other person was capable of making. But as the first night progressed, we grew comfortable with one another. We figured that human connection was an important issue that we could help address. And so, EmpAIthetic was born!
 
-## Getting Started
+We’ve created a journal entry app that provides a safe, judgment-free space for users by integrating AI. Our focus is on people struggling with mental health or anyone who simply needs an empathetic listener. At first, you might think, "Why would anyone want to vent to an AI?" But it's precisely the fact that an AI is doing the listening that makes this so effective.
 
-First, run the development server:
+For many people dealing with mental health challenges, there’s a difficult paradox: they don’t feel comfortable sharing their thoughts and emotions with another person, yet they feel isolated because they keep everything to themselves. This creates a cycle where bottling up emotions leads to even greater feelings of loneliness and isolation, deepening the struggle.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Our app breaks that cycle. It offers a space where people can express themselves freely without the fear of judgment or the vulnerability of talking to another person. The AI reads journal entries, engages in meaningful conversations, and responds with empathy and understanding, making users feel heard and supported in real time.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Whether it’s venting frustrations in the middle of the night or journaling to manage daily stress, our platform provides the therapeutic benefit of being listened to—without the pressure of human interaction. By lowering the barriers to emotional expression, we make it easier for people to take care of their mental well-being on their own terms. Humans are inherently social, and just having someone—or something—that can listen makes a world of difference.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+To make EmpAIthetic, we used Next.JS, a framework of React, to develop the front-end web application. We also used Flask, a Python framework, to incorporate the use of AI through the OpenAI-4o mini model. Firebase offered us a database that stored user data and inputs, as well as a google authentication system for user logins. TypeScript and Tailwind CSS were our final tools in designing the website.
